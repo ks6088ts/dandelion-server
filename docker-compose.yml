@@ -1,0 +1,74 @@
+version: '3'
+services:
+  # docker-compose run --rm -p 80:80 certbot
+  certbot:
+    build:
+      context: .
+      dockerfile: ./docker/certbot/Dockerfile
+    container_name: certbot
+    env_file:
+      - ./docker/certbot/env
+    ports:
+      - 80:80
+    restart: always
+    volumes:
+      - ./volumes/etc/letsencrypt:/etc/letsencrypt
+      - ./volumes/var/lib/letsencrypt:/var/lib/letsencrypt
+    command: certonly
+  nginx:
+    build:
+      context: .
+      dockerfile: ./docker/nginx/Dockerfile
+    container_name: nginx
+    env_file:
+      - ./docker/nginx/env
+    ports:
+      # - 80:80
+      # - 443:443
+      - 8080:80 # for debug
+    networks:
+      - default
+      - shared-network
+    restart: always
+    volumes:
+      # - ./volumes/etc/letsencrypt:/etc/letsencrypt
+      # - ./volumes/var/lib/letsencrypt:/var/lib/letsencrypt
+      # - ./docker/nginx/conf.d:/etc/nginx/conf.d
+      - ./docker/nginx/conf.d.debug:/etc/nginx/conf.d # for debug
+      - ./outputs/html:/usr/share/nginx/html
+  mysql:
+    build:
+      context: .
+      dockerfile: ./docker/mysql/Dockerfile
+    container_name: mysql
+    env_file:
+      - ./docker/mysql/env
+    restart: always
+    ports: 
+      - "3306:3306" # for debug
+    volumes:
+      - ./docker/mysql/conf.d/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
+    networks:
+      - default
+      - shared-network
+  python:
+    build:
+      context: .
+      dockerfile: ./docker/python/Dockerfile
+    container_name: python
+    env_file:
+      - ./docker/python/env
+    restart: always
+    ports: 
+      - "8080:8080" # for debug
+    tty: true
+    networks:
+      - default
+      - shared-network
+    volumes:
+      - ./:/home/rest-python
+    # command: make deploy # _FIXME
+
+networks:
+  shared-network:
+    external: true
