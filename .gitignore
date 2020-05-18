@@ -130,4 +130,5 @@ dmypy.json
 
 # Project
 outputs
-migrations
+**/migrations/*.py
+!__init__.py

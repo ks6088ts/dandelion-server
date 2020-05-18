@@ -23,10 +23,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "8)4vb%q_12u773vyi(lmly91phb7-yr(0(^ghqtw1kwa4a-swp"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False  # _FIXME
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]  # _FIXME
 
+CORS_ORIGIN_ALLOW_ALL = True  # _FIXME
 
 # Application definition
 
@@ -37,6 +38,12 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "products.apps.ProductsConfig",
+    "django.contrib.humanize",
+    "ckeditor",
+    "ckeditor_uploader",
+    "rest_framework",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
@@ -47,6 +54,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -75,9 +83,18 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-    }
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "db",
+        "USER": "root",
+        "PASSWORD": "password",
+        "HOST": "mysql",
+        "PORT": "3306",
+        "OPTIONS": {
+            # https://qiita.com/shirakiya/items/71861325b2c8988979a2
+            "charset": "utf8mb4",
+            "sql_mode": "TRADITIONAL,NO_AUTO_VALUE_ON_ZERO,ONLY_FULL_GROUP_BY",
+        },
+    },
 }
 
 
@@ -112,3 +129,28 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = "/static/"
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATIC_ROOT = "./outputs/html/static"
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = "./outputs/html/media"
+
+# CKEditor
+CKEDITOR_JQUERY_URL = "//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"
+CKEDITOR_UPLOAD_PATH = "uploads/"
+CKEDITOR_IMAGE_BACKEND = "pillow"
+CKEDITOR_CONFIGS = {
+    "default": {"toolbar": "full",},
+}
+
+# Django REST Framework
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
+    ],
+    # https://www.django-rest-framework.org/tutorial/quickstart/#pagination
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
+}

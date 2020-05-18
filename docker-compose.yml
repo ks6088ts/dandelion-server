@@ -23,18 +23,18 @@ services:
     env_file:
       - ./docker/nginx/env
     ports:
-      # - 80:80
-      # - 443:443
-      - 8080:80 # for debug
+      - 80:80
+      - 443:443
+      # - 8888:80 # for debug
     networks:
       - default
       - shared-network
     restart: always
     volumes:
-      # - ./volumes/etc/letsencrypt:/etc/letsencrypt
-      # - ./volumes/var/lib/letsencrypt:/var/lib/letsencrypt
-      # - ./docker/nginx/conf.d:/etc/nginx/conf.d
-      - ./docker/nginx/conf.d.debug:/etc/nginx/conf.d # for debug
+      - ./volumes/etc/letsencrypt:/etc/letsencrypt
+      - ./volumes/var/lib/letsencrypt:/var/lib/letsencrypt
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+      # - ./docker/nginx/conf.d.debug:/etc/nginx/conf.d # for debug
       - ./outputs/html:/usr/share/nginx/html
   mysql:
     build:
@@ -44,8 +44,8 @@ services:
     env_file:
       - ./docker/mysql/env
     restart: always
-    ports: 
-      - "3306:3306" # for debug
+    # ports: 
+    #   - "3306:3306" # for debug
     volumes:
       - ./docker/mysql/conf.d/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
     networks:
@@ -59,15 +59,15 @@ services:
     env_file:
       - ./docker/python/env
     restart: always
-    ports: 
-      - "8080:8080" # for debug
+    # ports: 
+    #   - "8080:8080" # for debug
     tty: true
     networks:
       - default
       - shared-network
     volumes:
       - ./:/home/rest-python
-    # command: make deploy # _FIXME
+    command: make deploy
 
 networks:
   shared-network:
