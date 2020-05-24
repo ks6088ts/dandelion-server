@@ -36,6 +36,7 @@ services:
       - ./docker/nginx/conf.d:/etc/nginx/conf.d
       # - ./docker/nginx/conf.d.debug:/etc/nginx/conf.d # for debug
       - ./outputs/html:/usr/share/nginx/html
+      # - ../dandelion-client/build:/usr/share/nginx/html # for debug
   mysql:
     build:
       context: .
