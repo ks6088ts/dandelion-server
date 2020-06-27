@@ -6,6 +6,9 @@ sudo apt install -y \
     emacs24 \
     make
 
+# リポジトリの clone
+git clone https://github.com/ks6088ts/dandelion-server.git
+
 # Docker イメージのビルド
 docker-compose build
 docker network create shared-network
@@ -23,7 +26,7 @@ docker-compose ps # 問題があれば -d 抜きで up して調査
 
 # スーパユーザ作成
 make docker-exec SERVICE=python
-make createsuperuser # python コンテナ内で
+make createsuperuser POETRY_RUN="" # python コンテナ内で
 ```
 
 # Tips

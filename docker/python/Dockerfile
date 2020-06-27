@@ -4,5 +4,7 @@ WORKDIR /home/rest-python
 
 COPY pyproject.toml poetry.lock ./
 
-RUN pip install poetry && \
-    poetry install --no-dev
+RUN mkdir outputs -p \
+    && pip install poetry \
+    && poetry export --dev -f requirements.txt > outputs/requirements.txt \
+    && pip install -r outputs/requirements.txt

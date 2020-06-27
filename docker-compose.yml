@@ -68,7 +68,7 @@ services:
       - shared-network
     volumes:
       - ./:/home/rest-python
-    command: make deploy
+    command: make deploy POETRY_RUN=""
 
 networks:
   shared-network:
